@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+transformers
+torch
+pydantic
+pytest
+httpx
+black
+flake8
+mypy

@@ -11,7 +11,7 @@ class SentimentService:
             self.model = pipeline(
                 "sentiment-analysis", 
                 model="AventIQ-AI/XLMRoBERTa_Multilingual_Sentiment_Analysis",
-                return_all_scores=True
+                top_k=None  # Reemplazar return_all_scores por top_k
             )
             logger.info("Modelo cargado exitosamente")
         except Exception as e:
@@ -21,7 +21,16 @@ class SentimentService:
     def analyze(self, text: str) -> List[Dict[str, Any]]:
         try:
             results = self.model(text)
-            return results[0] if results else []
+            logger.info(f"Resultados raw del modelo: {results}")
+            
+            # El modelo devuelve una lista de listas, necesitamos la primera lista
+            if isinstance(results, list) and len(results) > 0:
+                if isinstance(results[0], list):
+                    return results[0]  # Caso cuando hay múltiples scores
+                else:
+                    return results  # Caso cuando hay un solo resultado
+            
+            return []
         except Exception as e:
             logger.error(f"Error al analizar texto: {e}")
             raise
